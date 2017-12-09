@@ -1,6 +1,7 @@
 # pasink
 Pulse-audio sink-setter with bluez and combined-sink support
 
+```
 Usage:
   pasink [options] [alsa_device] [bluez_device]
 
@@ -17,4 +18,5 @@ Examples:
   pasink -va 100 -vb 80 belkin hdmi     - creates combined sink of belkin
                                           (an already paired bluetooth device)
                                           and HDMI (alsa card device)
-                                          and sets volume for each device
+                                          and sets volume for each device
+```
