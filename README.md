@@ -36,8 +36,8 @@ Available Alsa card devices:
 	Aureon Dual USB Digital Stereo (IEC958)
 
 Available Bluetooth A2DP devices:
-	00:13:17:D0:1E:C0	paired   	Nokia AD-42W
-	00:02:72:EC:7E:DA	connected	Belkin C63
+	00:13:17:D0:1E:C0	paired	Nokia AD-42W
+	00:02:72:EC:7E:DA	sinked	Belkin C63
   
  ```
  
