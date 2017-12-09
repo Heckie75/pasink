@@ -58,7 +58,7 @@ function dump() {
   echo -e "\nAvailable Bluetooth A2DP devices:"
   cat /tmp/bluez_audio_devices | awk '{ \
     split($0, s, "\t"); \
-    status=($1==1 ? "connected" : "paired   "); \
+    status=($1==1 ? "sinked" : "paired"); \
     print "\t"s[2]"\t"status"\t"s[3]; \
   }'
 
