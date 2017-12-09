@@ -25,14 +25,17 @@ function list() {
   echo -e "\nDefault sink:"
   get_default_sink | cut -f4 | awk '{print "\t"$0}'
 
-  echo -e "\nAvailable Alsa card devices:"
+  echo -e "\nPlugged Alsa card devices:"
   list_sinks | grep 'alsa_output' | cut -f4 | awk '{print "\t"$0}'
 
-  echo -e "\nAvailable Bluetooth A2DP devices:"
+  echo -e "\nSinked Bluetooth A2DP device:"
+  list_sinks | grep 'bluez' | cut -f4 | awk '{print "\t"$0}'
+
+  echo -e "\nPaired Bluetooth A2DP devices:"
   cat /tmp/bluez_audio_devices | awk '{ \
     split($0, s, "\t"); \
-    status=($1==1 ? "connected" : "paired   "); \
-    print "\t"s[2]"\t"status"\t"s[3]; \
+    status=($1==1 ? "sinked" : "paired"); \
+    print "\t"s[3]; \
   }'
 
   pactl list sinks short | grep 'module-combine-sink' > /dev/null
@@ -44,6 +47,10 @@ function list() {
       awk '{gsub(/^[ \t]+/, "", $0); print "\t"$0;}'
   fi
 
+  echo -e  "\nVolume:"
+  list_sinks | cut -f2,6,4 | egrep "^R" | sed 's/R\t//' | \
+    awk '{match($0, "(.*)\t([0-9]+%)$", s); print "\t"s[2]"\t"s[1];}'
+
   echo
 }
 
@@ -52,15 +59,11 @@ function dump() {
   echo -e "\nDefault sink:"
   get_default_sink
 
-  echo -e "\nAvailable Alsa card devices:"
+  echo -e "\nPlugged Alsa card devices:"
   list_sinks | grep 'alsa_output'
 
-  echo -e "\nAvailable Bluetooth A2DP devices:"
-  cat /tmp/bluez_audio_devices | awk '{ \
-    split($0, s, "\t"); \
-    status=($1==1 ? "sinked" : "paired"); \
-    print "\t"s[2]"\t"status"\t"s[3]; \
-  }'
+  echo -e "\nSinked Bluetooth A2DP device:"
+  list_sinks | grep 'bluez'
 
   pactl list sinks short | grep 'module-combine-sink' > /dev/null
   if [ $? == 0 ]
@@ -68,6 +71,13 @@ function dump() {
     echo -e "\nCombined sink:"
     list_sinks | egrep "module-combine-sink"
   fi
+
+  echo -e "\nPaired Bluetooth A2DP devices:"
+  cat /tmp/bluez_audio_devices | awk '{ \
+    split($0, s, "\t"); \
+    status=($1==1 ? "sinked" : "paired"); \
+    print s[2]"\t"status"\t"s[3]; \
+  }'
 
   echo
 }
@@ -191,11 +201,12 @@ function list_sinks() {
 	  name = ""; \
 	  state = ""; \
 	  driver = ""; \
+      volume = ""; \
 	} \
     /^Sink #/ { \
 	  match($0, "Sink #([0-9]+)$",s); \
 	  id = s[1]; \
-	  print id"\t"substr(state, 0, 1)"\t"driver"\t"desc"\t"name; \
+	  print id"\t"substr(state, 0, 1)"\t"driver"\t"desc"\t"name"\t"volume; \
     } \
 	/Description:/ { \
 	  match($0, "Description: (.+)$",s); \
@@ -209,12 +220,17 @@ function list_sinks() {
 	  match($0, "State: (.+)$",s); \
       state = s[1]; \
     } \
+    /Base Volume:/ { \
+    } \
+    /Volume.*front/ { \
+      match($0, "([0-9]+%).* ([0-9]+%)", s); \
+      volume = s[1] == s[2] ? s[1] : "L"s[1]", R"s[2]; \
+    }
 	/Driver:/ { \
 	  match($0, "Driver: (.+)$",s); \
 	  driver = s[1]; \
 	}' | sort -n
-
-	}
+  }
 
 function get_default_sink() {
   _sink=`pacmd stat | awk -F": " '/^Default sink name: /{print $2}'`
@@ -297,7 +313,7 @@ while [ "$1" != "" ]; do
     -l | --list )      list
                        exit 0
                        ;;
-    -d | --dump )      dump 
+    -d | --dump )      dump
                        exit 0
                        ;;
     -v | --vol )       shift
