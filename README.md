@@ -1,5 +1,8 @@
-# pasink
-Pulse-audio sink-setter with bluez and combined-sink support
+# pasink - Pulse-audio sink-setter with bluez and combined sink support
+
+pasink is a command line interface (CLI) which allows easily to switch audio sinks. It support ALSA devices and also Bluetooth A2DP Audio sinks. Sometimes you might want to hear your music on your stereo in your livingroom, which is directly connected to yout computer, but also in the kitcher where your have a bluetooth audio device. For this situation pasink allows you to create a combined audio sink. pasink automatically connects your already paired bluetooth device and create a so called 'combined sink'. In case that you have a bluetooth audio device also in your bedroom - like me - you can also switch bluetooth devices just by giving the name of the bluetooth device. 
+
+Take a look at the examples for more details. 
 
 ```
 Usage:
@@ -20,6 +23,38 @@ Examples:
                                           and HDMI (alsa card device)
                                           and sets volume for each device
 ```
+
+## Requirements / pre-conditions
+
+pasink interally uses the following:
+
+1. `bluez` - Bluetooth tools and daemons, especially the command `bluetoothctl`
+
+The script uses `bluetoothctl` in order to list already paired A2DP bluetooth devides and to connect to them by name or mac address. 
+
+2. `expect`
+
+Internally pasink remote controls `bluetoothctl` like a macro. This will be done by using `expect`
+`expect` can be installed as follows:
+
+```
+$ sudo apt install expect
+```
+
+3. `pulseaudio`
+
+Pulse-Audio is the audio server. It should come with any state-of-the-art linux distribution out of the box. You might want to check if the following command line tools are available which are called by `pasink` internally:
+
+a. `pacmd`
+b. `pactl`
+
+You MUST check and adjust some configuration. Please make sure that the following line is in the file `/etc/pulse/default.pa`:
+
+```
+load-module module-switch-on-connect
+```
+
+This module is required because it is responsible to automatically setup a new audio sink after a bluetooth A2DP device has been connected.  
 
 ## Examples
 
