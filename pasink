@@ -12,6 +12,7 @@ function usage() {
   echo -e "  -vb, --vol-blue <0-100> <bluez_device>  set volume for bluetooth audio sink"
   echo -e "  -l,  --list                             list default, alsa, bluez and combined sinks"
   echo -e "  -ll, --list-all                         list more technical information of sinks"
+  echo -e "  -j,  --json                             simular to list-all but in json format"
   echo -e "  -d,  --disconnect                       disconnect all bluetooth devices"
   echo -e "  -p,  --pair <mac>                       pair new bluetooth a2dp device"
   echo -e "\nExamples:"
