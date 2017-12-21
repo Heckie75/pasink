@@ -60,7 +60,7 @@ function list() {
 
 function json() { 
   
-  default_sink=get_default_sink
+  default_sink=`get_default_sink | cut -f5`
   echo -e "{"
   echo -e "  \"sinks\" : ["
   list_sinks | awk -vds="${default_sink}" '\
@@ -70,7 +70,7 @@ function json() {
   out = out"\
     {\n\
       \"id\" : "s[1]",\n\
-      \"status\" : \""(s[2] == "S" ? "Subspended" : "Running")"\",\n\
+      \"status\" : \""(s[2] == "S" ? "SUSPENDED" : "RUNNING")"\",\n\
       \"driver\" : \""s[3]"\",\n\
       \"name\" : \""s[4]"\",\n\
       \"sink\" : \""s[5]"\",\n\
@@ -87,7 +87,7 @@ function json() {
   out = out"\
     {\n\
       \"mac\" : \""s[2]"\",\n\
-      \"status\" : \""(s[1] == 0 ? "paired" : "sinked")"\",\n\
+      \"status\" : \""(s[1] == 0 ? "PAIRED" : "SINKED")"\",\n\
       \"name\" : \""s[3]"\"\n\
     \},\n"}\
   END { print substr(out, 0, length(out) - 2) }' 2> /dev/null
