@@ -57,6 +57,16 @@ load-module module-switch-on-connect
 
 This module is required because it is responsible to automatically setup a new audio sink after a bluetooth A2DP device has been connected.  
 
+4. GNU Awk
+
+Please check if GNU Awk (`gawk`) is installed.
+
+```
+$ awk --version
+GNU Awk 4.2.1, API: 2.0 (GNU MPFR 4.0.2, GNU MP 6.1.2)
+```
+
+
 ## Examples
 
 1. List sinks
