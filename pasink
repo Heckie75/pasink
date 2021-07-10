@@ -77,7 +77,7 @@ function json() {
       \"driver\" : \""s[3]"\",\n\
       \"name\" : \""s[4]"\",\n\
       \"sink\" : \""s[5]"\",\n\
-      \"default\" : \""(s[5] == ds ? "true" : "false")"\",\n\
+      \"default\" : "(s[5] == ds ? "true" : "false")",\n\
       \"vol\" : \""s[6]"\"\n\
     \},\n"}\
   END { print substr(out, 0, length(out) - 2) }' 2> /dev/null
