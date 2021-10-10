@@ -1,6 +1,6 @@
 # pasink - Pulse-audio sink-setter with bluez and combined sink support
 
-`pasink` is a command line interface (CLI) which allows easily to switch audio sinks. It support ALSA devices and also Bluetooth A2DP Audio sinks. Sometimes you might want to hear your music on your stereo in your livingroom, which is directly connected to yout computer, but also in the kitcher where your have a bluetooth audio device. For this situation pasink allows you to create a combined audio sink. pasink automatically connects your already paired bluetooth device and create a so called 'combined sink'. In case that you have a bluetooth audio device also in your bedroom - like me - you can also switch bluetooth devices just by giving the name of the bluetooth device. 
+`pasink` is a command line interface (CLI) which allows easily to switch audio sinks. It support ALSA devices and also Bluetooth A2DP Audio sinks. Sometimes you might want to hear your music on your stereo in your livingroom, which is directly connected to your computer, but also in the kitchen where your have a bluetooth audio device. For this situation pasink allows you to create a combined audio sink. pasink automatically connects your already paired bluetooth device and create a so called 'combined sink'. In case that you have a bluetooth audio device also in your bedroom - like me - you can also switch bluetooth devices just by giving the name of the bluetooth device. 
 
 Take a look at the examples for more details. 
 
