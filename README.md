@@ -5,6 +5,8 @@
 Take a look at the examples for more details. 
 
 ```
+Pulse-audio sink-setter with bluez and combined-sink support
+
 Usage:
   pasink [options] [alsa_device] [bluez_device]
 
@@ -14,14 +16,18 @@ Options:
   -va, --vol-alsa <0-100> <alsa_device>   set volume for alsa sink
   -vb, --vol-blue <0-100> <bluez_device>  set volume for bluetooth audio sink
   -l,  --list                             list default, alsa, bluez and combined sinks
-  -d,  --dump                             dump more technical information of sinks
+  -ll, --list-all                         list more technical information of sinks
+  -lc, --list-codecs                      list supported codecs (bluetooth sinks only)
+  -sc, --switch-codec <codec>             switch to codec (bluetooth sinks only)
+  -j,  --json                             simular to list-all but in json format
+  -d,  --disconnect                       disconnect all bluetooth devices
   -p,  --pair <mac>                       pair new bluetooth a2dp device
 
 Examples:
   pasink -va 100 -vb 80 belkin hdmi     - creates combined sink of belkin
                                           (an already paired bluetooth device)
                                           and HDMI (alsa card device)
-                                          and sets volume for each device
+                                          and sets volume for each device
 ```
 
 ## Requirements / pre-conditions

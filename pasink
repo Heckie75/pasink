@@ -15,6 +15,8 @@ function usage() {
   echo -e "  -vb, --vol-blue <0-100> <bluez_device>  set volume for bluetooth audio sink"
   echo -e "  -l,  --list                             list default, alsa, bluez and combined sinks"
   echo -e "  -ll, --list-all                         list more technical information of sinks"
+  echo -e "  -lc, --list-codecs                      list supported codecs (bluetooth sinks only)"
+  echo -e "  -sc, --switch-codec                     switch to codec (bluetooth sinks only)"
   echo -e "  -j,  --json                             simular to list-all but in json format"
   echo -e "  -d,  --disconnect                       disconnect all bluetooth devices"
   echo -e "  -p,  --pair <mac>                       pair new bluetooth a2dp device"
@@ -78,7 +80,8 @@ function json() {
       \"name\" : \""s[4]"\",\n\
       \"sink\" : \""s[5]"\",\n\
       \"default\" : "(s[5] == ds ? "true" : "false")",\n\
-      \"vol\" : \""s[6]"\"\n\
+      \"volume\" : \""s[6]"\"  \n\
+      \"codec\" : \""s[7]"\"  \n\
     \},\n"}\
   END { print substr(out, 0, length(out) - 2) }' 2> /dev/null
   echo -e "  ],"
@@ -203,7 +206,7 @@ function connect_bluez_by_mac() {
     spawn -noecho bluetoothctl
     expect "#"
     send "select $1\n"
-    expect "#"    
+    expect "#"
     send "connect $2\n"
     expect {
       "Connection successful" {
@@ -268,41 +271,47 @@ function lookup_alsa_device() {
 function list_sinks() {
 
   pactl list sinks | tac | awk '\
-    BEGIN { \
-	  id = 0; \
-	  desc = ""; \
-	  name = ""; \
-	  state = ""; \
-	  driver = ""; \
-      volume = ""; \
-	} \
-    /^Sink #/ { \
-	  match($0, "Sink #([0-9]+)$",s); \
-	  id = s[1]; \
-	  print id"\t"substr(state, 0, 1)"\t"driver"\t"desc"\t"name"\t"volume; \
+  BEGIN { \
+    id = 0; \
+    desc = ""; \
+    name = ""; \
+    state = ""; \
+    driver = ""; \
+    volume = ""; \
+    codec = ""; \
+  } \
+  /^Sink #/ { \
+    match($0, "Sink #([0-9]+)$",s); \
+    id = s[1]; \
+    print id"\t"substr(state, 0, 1)"\t"driver"\t"desc"\t"name"\t"volume"\t"codec; \
+    codec = "";
     } \
-	/Description:/ { \
-	  match($0, "Description: (.+)$",s); \
-	  desc = s[1]; \
-	} \
-	/Name:/ { \
-	  match($0, "Name: (.+)$",s); \
-	  name = s[1]; \
-	} \
-	/State:/ { \
-	  match($0, "State: (.+)$",s); \
-      state = s[1]; \
-    } \
-    /Base Volume:/ { \
-    } \
-    /Volume.*front/ { \
+  /Description:/ { \
+    match($0, "Description: (.+)$",s); \
+    desc = s[1]; \
+  } \
+  /Name:/ { \
+    match($0, "Name: (.+)$",s); \
+    name = s[1]; \
+  } \
+  /State:/ { \
+    match($0, "State: (.+)$",s); \
+    state = s[1]; \
+  } \
+  /bluetooth.codec/ { \
+      match($0, "bluetooth.codec = \"([^\"]+)\"", s); \
+      codec = s[1]; \
+  }
+  /Base Volume:/ { \
+  } \
+  /Volume.*front/ { \
       match($0, "([0-9]+%).* ([0-9]+%)", s); \
       volume = s[1] == s[2] ? s[1] : "L"s[1]", R"s[2]; \
-    }
-	/Driver:/ { \
-	  match($0, "Driver: (.+)$",s); \
-	  driver = s[1]; \
-	}' | sort -n
+  }
+  /Driver:/ { \
+    match($0, "Driver: (.+)$",s); \
+    driver = s[1]; \
+  }' | sort -n
   }
 
 function get_default_sink() {
@@ -418,6 +427,15 @@ while [ "$1" != "" ]; do
     -vb | --vol-blue )
                        shift
                        vol_bluez=$1
+                       ;;
+    -lc | --list-codecs )
+                       shift
+                       pactl send-message /card/bluez_card.${current_bluez_mac//:/_}/bluez list-codecs
+                       ;;
+    -sc | --switch-codec )
+                       shift
+                       codec="\"$1\""
+                       pactl send-message /card/bluez_card.${current_bluez_mac//:/_}/bluez switch-codec $codec
                        ;;
     -d | --disconnect ) disconnect $current_bluez_controller $current_bluez_mac
                        ;;
