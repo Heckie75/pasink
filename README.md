@@ -17,8 +17,6 @@ Options:
   -vb, --vol-blue <0-100> <bluez_device>  set volume for bluetooth audio sink
   -l,  --list                             list default, alsa, bluez and combined sinks
   -ll, --list-all                         list more technical information of sinks
-  -lc, --list-codecs                      list supported codecs (bluetooth sinks only)
-  -sc, --switch-codec <codec>             switch to codec (bluetooth sinks only)
   -j,  --json                             simular to list-all but in json format
   -d,  --disconnect                       disconnect all bluetooth devices
   -p,  --pair <mac>                       pair new bluetooth a2dp device
