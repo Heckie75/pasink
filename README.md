@@ -28,6 +28,10 @@ Examples:
                                           and sets volume for each device
 ```
 
+## Important note
+This script doesn't work anymore on systems using pipewire like Ubuntu 23.04 or later. I have used this script on Ubuntu 22.04.
+There is a new script that is exclusivly writter for Pipewire, see [pwsink](https://www.github.com/heckie75/pwsink)
+
 ## Requirements / pre-conditions
 
 pasink interally uses the following:
@@ -50,8 +54,6 @@ $ sudo apt install expect
 Pulse-Audio is the audio server. It should come with any state-of-the-art linux distribution out of the box. You might want to check if the following command line tools are available which are called by `pasink` internally:
 
 a) `pacmd`
-
-b) `pactl`
 
 You MUST check and adjust some configuration. Please make sure that the following line is in the file `/etc/pulse/default.pa`:
 
